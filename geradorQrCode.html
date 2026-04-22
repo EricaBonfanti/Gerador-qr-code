@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gerador de QR Code</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="geradorQrCode.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Gerador de QR Code</h1>
+        
+        <div class="input-group">
+            <label for="urlInput">URL do link</label>
+            <input 
+                type="url" 
+                id="urlInput" 
+                placeholder="https://exemplo.com.br" 
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="custom-panel">
+            <div class="panel-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m4.22-10.22l4.24-4.24M6.34 6.34L2.1 2.1m17.8 17.8l-4.24-4.24M6.34 17.66l-4.24 4.24"/>
+                </svg>
+                Personalização
+            </div>
+            
+            <div class="color-item">
+                <label>Cor do QR Code</label>
+                <div class="color-wrapper">
+                    <input type="color" id="qrColor" value="#000000">
+                    <span class="color-hex" id="qrColorHex">#000000</span>
+                </div>
+                <div class="color-error" id="colorError">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span>Escolha uma cor mais escura para melhor leitura</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="qr-wrapper" id="qrWrapper">
+            <div class="qr-placeholder" id="placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <path d="M14 14h7v7h-7z"/>
+                    <path d="M17 17h1v1h-1z"/>
+                </svg>
+                <p>Digite uma URL para gerar o QR Code</p>
+            </div>
+            <div id="qrcode"></div>
+        </div>
+
+        <div class="url-display" id="urlDisplay"></div>
+
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Baixar QR Code
+        </button>
+
+        <div class="history-section">
+            <div class="history-header">
+                <div class="history-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="1 4 1 10 7 10"/>
+                        <polyline points="23 20 23 14 17 14"/>
+                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                    </svg>
+                    Recentes
+                </div>
+                <button class="clear-btn" id="clearBtn" style="display: none;">Limpar</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="history-empty">Nenhum QR Code gerado ainda</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">
+                Desenvolvido por <span class="footer-name">Érica Bonfanti Corrêa</span>
+            </p>
+            <a href="https://www.linkedin.com/in/ericabonf/" target="_blank" rel="noopener noreferrer" class="footer-link">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                LinkedIn
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const qrcodeContainer = document.getElementById('qrcode');
+        const placeholder = document.getElementById('placeholder');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const urlDisplay = document.getElementById('urlDisplay');
+        const qrWrapper = document.getElementById('qrWrapper');
+        
+        const qrColorInput = document.getElementById('qrColor');
+        const qrColorHex = document.getElementById('qrColorHex');
+        const colorError = document.getElementById('colorError');
+        
+        const historyList = document.getElementById('historyList');
+        const clearBtn = document.getElementById('clearBtn');
+
+        let qrCodeInstance = null;
+        let currentUrl = null;
+        const FIXED_BG_COLOR = '#ffffff';
+
+        const STORAGE_KEY = 'qrHistory_responsive';
+
+        function getHistory() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveHistory(history) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 3)));
+        }
+
+        function addToHistory(url, qrDataUrl) {
+            const history = getHistory();
+            const filtered = history.filter(item => item.url !== url);
+            filtered.unshift({
+                url: url,
+                qrDataUrl: qrDataUrl,
+                date: new Date().toLocaleString('pt-BR', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                })
+            });
+            saveHistory(filtered);
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const history = getHistory();
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="history-empty">Nenhum QR Code gerado ainda</div>';
+                clearBtn.style.display = 'none';
+                return;
+            }
+
+            clearBtn.style.display = 'block';
+            
+            historyList.innerHTML = history.map(item => `
+                <div class="history-item" data-url="${encodeURIComponent(item.url)}">
+                    <div class="history-qr">
+                        <img src="${item.qrDataUrl}" alt="QR Code">
+                    </div>
+                    <div class="history-info">
+                        <div class="history-url">${escapeHtml(item.url)}</div>
+                        <div class="history-date">${item.date}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.history-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const url = decodeURIComponent(this.dataset.url);
+                    urlInput.value = url;
+                    urlInput.dispatchEvent(new Event('input'));
+                });
+            });
+        }
+
+        function clearHistory() {
+            localStorage.removeItem(STORAGE_KEY);
+            renderHistory();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function isLightColor(hex) {
+            const r = parseInt(hex.substr(1, 2), 16);
+            const g = parseInt(hex.substr(3, 2), 16);
+            const b = parseInt(hex.substr(5, 2), 16);
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return luminance > 0.6;
+        }
+
+        function isValidURL(string) {
+            try {
+                const url = new URL(string);
+                return url.protocol === 'http:' || url.protocol === 'https:';
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function generateQRCode(url) {
+            qrcodeContainer.innerHTML = '';
+            
+            const fgColor = qrColorInput.value;
+
+            if (isLightColor(fgColor)) {
+                colorError.classList.add('show');
+                placeholder.style.display = 'block';
+                qrcodeContainer.style.display = 'none';
+                downloadBtn.classList.remove('active');
+                qrWrapper.classList.remove('active');
+                return;
+            } else {
+                colorError.classList.remove('show');
+            }
+
+            qrCodeInstance = new QRCode(qrcodeContainer, {
+                text: url,
+                width: 200,
+                height: 200,
+                colorDark: fgColor,
+                colorLight: FIXED_BG_COLOR,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            qrcodeContainer.classList.add('qr-appear');
+            qrWrapper.classList.add('active');
+        }
+
+        function updateQRDisplay() {
+            const url = urlInput.value.trim();
+
+            if (url === '') {
+                resetState();
+                return;
+            }
+
+            urlDisplay.textContent = url;
+            placeholder.style.display = 'none';
+            qrcodeContainer.style.display = 'block';
+            
+            generateQRCode(url);
+
+            if (isValidURL(url) && !isLightColor(qrColorInput.value)) {
+                downloadBtn.classList.add('active');
+                currentUrl = url;
+            } else {
+                downloadBtn.classList.remove('active');
+                currentUrl = null;
+            }
+        }
+
+        function resetState() {
+            qrcodeContainer.innerHTML = '';
+            qrcodeContainer.style.display = 'none';
+            placeholder.style.display = 'block';
+            downloadBtn.classList.remove('active');
+            urlDisplay.textContent = '';
+            qrWrapper.classList.remove('active');
+            colorError.classList.remove('show');
+            currentUrl = null;
+            qrCodeInstance = null;
+        }
+
+        urlInput.addEventListener('input', updateQRDisplay);
+
+        qrColorInput.addEventListener('input', function() {
+            qrColorHex.textContent = this.value.toUpperCase();
+            if (urlInput.value.trim()) {
+                updateQRDisplay();
+            }
+        });
+
+        downloadBtn.addEventListener('click', function() {
+            if (!this.classList.contains('active') || !currentUrl) return;
+
+            const canvas = qrcodeContainer.querySelector('canvas');
+            if (!canvas) return;
+
+            const downloadCanvas = document.createElement('canvas');
+            const ctx = downloadCanvas.getContext('2d');
+            const size = 600;
+            
+            downloadCanvas.width = size;
+            downloadCanvas.height = size;
+
+            ctx.fillStyle = FIXED_BG_COLOR;
+            ctx.fillRect(0, 0, size, size);
+            ctx.drawImage(canvas, 0, 0, size, size);
+
+            const thumbCanvas = document.createElement('canvas');
+            const thumbCtx = thumbCanvas.getContext('2d');
+            thumbCanvas.width = 100;
+            thumbCanvas.height = 100;
+            thumbCtx.fillStyle = FIXED_BG_COLOR;
+            thumbCtx.fillRect(0, 0, 100, 100);
+            thumbCtx.drawImage(canvas, 0, 0, 100, 100);
+            const dataUrl = thumbCanvas.toDataURL('image/png');
+
+            const link = document.createElement('a');
+            link.download = 'qrcode-' + Date.now() + '.png';
+            link.href = downloadCanvas.toDataURL('image/png');
+            link.click();
+
+            addToHistory(currentUrl, dataUrl);
+        });
+
+        clearBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (confirm('Deseja limpar o histórico?')) {
+                clearHistory();
+            }
+        });
+
+        urlInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+
+        renderHistory();
+    </script>
+
+</body>
+</html>
