@@ -13,7 +13,15 @@
 
 Parei de apenas seguir tutoriais e comecei a projetar soluções reais.
 
-Este projeto é um **Gerador de QR Code Inteligente**, desenvolvido com foco em **experiência do usuário, regras de negócio e persistência de dados**, utilizando conceitos de **Vibe Coding** e **Engenharia de Prompts**.
+## ⚠️ Contexto e Motivação
+
+A semente deste projeto surgiu ao acompanhar um conteúdo do **Renato Faria**, que demonstrava como criar um gerador de QR Code simplificado utilizando a IA **Kimi** e publicando-o através do Google Sites. 
+
+No entanto, decidi utilizar esse ensinamento como um ponto de partida para um desafio técnico mais profundo. O objetivo foi aplicar o conceito de **Vibe Coding** para elevar o nível da aplicação, realizando as seguintes evoluções:
+
+- **Migração para Ambiente de Desenvolvimento:** Em vez de utilizar plataformas *no-code* (Google Sites), integrei o projeto diretamente no **VS Code**, permitindo maior controle sobre o código-fonte.
+- **Engenharia de Prompts Avançada:** Refinei e criei novos prompts para que a IA gerasse funcionalidades complexas que não existiam na versão original (como o histórico de LocalStorage e a validação de cores).
+- **Customização de Regras de Negócio:** Adicionei camadas de lógica para garantir a legibilidade do QR Code e a persistência de dados no navegador.
 
 Mais do que um simples gerador, ele foi pensado como um **Micro-SaaS**, onde cada funcionalidade resolve uma dor real com estética e inteligência.
 
@@ -38,7 +46,7 @@ A aplicação combina lógica de programação com decisões de produto, resulta
 O sistema impede automaticamente o uso de cores muito claras, garantindo que o QR Code seja sempre **legível e escaneável**.
 
 ### ✅ Gestão de Estado (LocalStorage)
-Armazena os **3 últimos QR Codes gerados**, incluindo miniaturas, melhorando o fluxo do usuário.
+Armazena o **último QR Code gerado**, incluindo miniaturas, melhorando o fluxo do usuário.
 
 ### ✅ Interface Premium & Responsiva
 - Tema **Ocean + Verde**
@@ -91,18 +99,14 @@ O resultado é uma aplicação com **visão de produto**, não apenas código.
 ## 📂 Estrutura do Projeto
 
 ```
-/src
-  ├── components
-  ├── services
-  ├── utils
-  └── styles
+/code
+  ├── geradorQrCode.css
+  └── geradorQrCode.html
 
-/assets
-/img
+/image
+  └── qrcode.png
 
-index.html
-style.css
-script.js
+README.md
 ```
 
 ---
@@ -111,17 +115,9 @@ script.js
 
 * Gerar QR Code personalizado
 * Escolher cores com validação automática
-* Visualização em tempo real
-* Histórico dos últimos códigos
+* Visualização do QR code
 * Download do QR Code
 * Interface responsiva
-
----
-
-## 🔗 Acesse o Projeto
-
-📂 GitHub:
-👉 [Link do seu repositório aqui]
 
 ---
 
@@ -140,16 +136,3 @@ O diferencial agora é saber **pensar como produto**, estruturar soluções e fa
 
 ---
 
-## 🏷️ Tags
-
-#MicroSaaS #VibeCoding #PromptEngineering #WebDev #UX #Frontend #SoftwareArchitecture #QRCode
-
-```
-
----
-
-Se quiser dar um nível ainda mais profissional depois, posso te mandar:
-- :contentReference[oaicite:0]{index=0}
-- :contentReference[oaicite:1]{index=1}
-- ou :contentReference[oaicite:2]{index=2}
-```
