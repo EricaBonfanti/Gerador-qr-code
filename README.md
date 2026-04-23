@@ -1,5 +1,4 @@
 
-````markdown
 # 🌊📱 Gerador de QR (Micro-SaaS)
 
 <div align="center">
